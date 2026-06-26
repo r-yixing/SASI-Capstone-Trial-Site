@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Care Hub</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <strong>Patient Care Hub</strong>
+        <span>Combine specialist records and share your story.</span>
+      </div>
+      <nav class="page-nav" aria-label="Primary">
+        <button class="nav-button active" data-screen="records-screen">Medical Records</button>
+        <button class="nav-button" data-screen="bio-screen">Patient Biography</button>
+      </nav>
+    </header>
+
+    <main class="page-content">
+      <section id="records-screen" class="screen active">
+        <div class="section-header">
+          <h1>Medical Records Hub</h1>
+          <p>Collect and combine medical notes from all your specialists in one accessible place.</p>
+        </div>
+
+        <form id="record-form" class="record-form">
+          <div class="field-group">
+            <label for="specialist">Specialist / Provider</label>
+            <input id="specialist" name="specialist" type="text" placeholder="e.g. Cardiologist" required />
+          </div>
+          <div class="field-group">
+            <label for="record-title">Record Title</label>
+            <input id="record-title" name="recordTitle" type="text" placeholder="e.g. Echocardiogram Report" required />
+          </div>
+          <div class="field-group">
+            <label for="record-date">Date</label>
+            <input id="record-date" name="recordDate" type="date" required />
+          </div>
+          <div class="field-group full-width">
+            <label for="record-file">Import PDF</label>
+            <input id="record-file" name="recordFile" type="file" accept="application/pdf" />
+            <p class="field-note">Add a PDF report to attach to this record. Files are stored locally in the browser.</p>
+          </div>
+          <div class="field-group full-width">
+            <label for="record-details">Details</label>
+            <textarea id="record-details" name="recordDetails" rows="4" placeholder="Enter the summary or findings from this specialist visit." required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">Add Record</button>
+            <button type="button" id="clear-records" class="secondary-button">Clear All Records</button>
+          </div>
+        </form>
+
+        <section class="records-overview">
+          <h2>Your Collected Records</h2>
+          <div id="record-list" class="record-list" aria-live="polite"></div>
+        </section>
+
+        <section class="merge-panel">
+          <h2>Combined Record Summary</h2>
+          <p>Review all records together or export the merged summary to share with care teams.</p>
+          <div class="merge-actions">
+            <button type="button" id="merge-records" class="primary-button">Merge Records</button>
+            <button type="button" id="download-summary" class="secondary-button">Download Summary</button>
+          </div>
+          <div id="merged-summary" class="summary-box"></div>
+        </section>
+      </section>
+
+      <section id="bio-screen" class="screen">
+        <div class="section-header">
+          <h1>Patient Biography</h1>
+          <p>Share your story, health priorities, and personal details with providers and trusted contacts.</p>
+        </div>
+
+        <form id="bio-form" class="bio-form">
+          <label for="biography">Tell us about yourself</label>
+          <textarea id="biography" name="biography" rows="10" placeholder="Write about your medical journey, personal strengths, lifestyle preferences, or anything helpful for care teams."></textarea>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">Save Biography</button>
+            <button type="button" id="clear-bio" class="secondary-button">Reset Biography</button>
+          </div>
+        </form>
+
+        <section class="bio-preview">
+          <h2>Biography Preview</h2>
+          <div id="bio-preview-content" class="preview-box">Your biography will appear here after saving.</div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Patient Care Hub is a prototype interface for consolidating medical records and personal health stories.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
