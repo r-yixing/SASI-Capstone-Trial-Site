@@ -1,6 +1,270 @@
 <!DOCTYPE html>
 <html lang="en">
+  <head><!DOCTYPE html>
+<html lang="en">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patient Care Hub</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <strong>Patient Care Hub</strong>
+        <span>Combine specialist records and share your story.</span>
+      </div>
+      <nav class="page-nav hidden" aria-label="Primary">
+        <button class="nav-button active" data-screen="dashboard-screen" data-role="all">Dashboard</button>
+        <button class="nav-button" data-screen="account-screen" data-role="all">Account</button>
+        <button class="nav-button" data-screen="records-screen" data-role="patient">Medical Records</button>
+        <button class="nav-button" data-screen="profile-screen" data-role="patient">Patient Profile</button>
+        <button class="nav-button" data-screen="bio-screen" data-role="patient">Biography</button>
+        <button class="nav-button" data-screen="professional-screen" data-role="professional">Patient Access</button>
+      </nav>
+      <div id="session-status" class="session-status hidden">
+        Signed in as <strong id="current-user-name"></strong> (<span id="current-user-role"></span>)
+        <button type="button" id="switch-account" class="secondary-button">Switch account</button>
+      </div>
+    </header>
+
+    <main class="page-content">
+      <section id="auth-screen" class="screen active">
+        <div class="section-header">
+          <h1>Welcome to Patient Care Hub</h1>
+          <p>Sign in or create an account to manage patient profiles, records, and access rights.</p>
+        </div>
+
+        <div class="auth-grid">
+          <section class="auth-panel">
+            <h2>Login</h2>
+            <form id="login-form" class="bio-form">
+              <label for="login-email">Email</label>
+              <input id="login-email" name="loginEmail" type="email" placeholder="you@example.com" required />
+              <label for="login-password">Password</label>
+              <input id="login-password" name="loginPassword" type="password" placeholder="Enter your password" required />
+              <div class="form-actions">
+                <button type="submit" class="primary-button">Login</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="auth-panel">
+            <h2>Create account</h2>
+            <form id="register-form" class="bio-form">
+              <label for="register-name">Full Name</label>
+              <input id="register-name" name="registerName" type="text" placeholder="Your name" required />
+              <label for="register-email">Email</label>
+              <input id="register-email" name="registerEmail" type="email" placeholder="you@example.com" required />
+              <label for="register-password">Password</label>
+              <input id="register-password" name="registerPassword" type="password" placeholder="Choose a password" required />
+              <label for="register-role">Account role</label>
+              <select id="register-role" name="registerRole" required>
+                <option value="patient">Patient</option>
+                <option value="professional">Doctor / Health Professional</option>
+              </select>
+              <div id="register-provider-group">
+                <label for="register-provider">Primary provider</label>
+                <input id="register-provider" name="registerProvider" type="text" placeholder="e.g. Dr. Amina Patel" />
+                <p id="register-provider-note" class="field-note">Patients should enter their primary doctor here. Professionals can later manage which providers they support.</p>
+              </div>
+              <div class="form-actions">
+                <button type="submit" class="primary-button">Create Account</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </section>
+
+      <section id="dashboard-screen" class="screen">
+        <div class="section-header">
+          <h1>Dashboard</h1>
+          <p id="dashboard-summary-text">Your role-based workspace is ready after login.</p>
+        </div>
+        <div id="dashboard-summary" class="summary-box"></div>
+      </section>
+
+      <section id="account-screen" class="screen">
+        <div class="section-header">
+          <h1>Account Settings</h1>
+          <p>Update your account details and access registry.</p>
+        </div>
+
+        <form id="account-form" class="bio-form">
+          <div class="field-group full-width">
+            <label for="account-name">Full Name</label>
+            <input id="account-name" name="accountName" type="text" />
+          </div>
+          <div class="field-group full-width">
+            <label for="account-email">Email</label>
+            <input id="account-email" name="accountEmail" type="email" disabled />
+          </div>
+          <div class="field-group full-width">
+            <label for="account-role">Account Role</label>
+            <input id="account-role" name="accountRole" type="text" disabled />
+          </div>
+          <div class="field-group full-width patient-only">
+            <label for="account-provider">Primary provider</label>
+            <input id="account-provider" name="accountProvider" type="text" />
+            <p class="field-note">This provider name determines which professionals can access your profile when they register the same provider in their registry.</p>
+          </div>
+          <div class="field-group full-width professional-only hidden">
+            <label for="account-registry">Provider registry</label>
+            <div class="registry-input-row">
+              <input id="account-registry" name="accountRegistry" type="text" placeholder="Add a provider name to your registry" />
+              <button type="button" id="add-registry-button" class="secondary-button">Add</button>
+            </div>
+            <div id="registry-list" class="registry-list"></div>
+            <p class="field-note">Professionals can access patients who list one of these providers as their primary provider.</p>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">Save Account</button>
+            <button type="button" id="logout-button" class="secondary-button">Log out</button>
+          </div>
+        </form>
+
+        <section class="bio-preview">
+          <h2>Account Snapshot</h2>
+          <div id="account-preview-content" class="preview-box">Your saved account details will appear here.</div>
+        </section>
+      </section>
+
+      <section id="professional-screen" class="screen">
+        <div class="section-header">
+          <h1>Patient Access</h1>
+          <p>Search for patients whose primary provider is in your registry.</p>
+        </div>
+
+        <div class="field-group full-width">
+          <label for="access-provider-filter">Filter by provider</label>
+          <select id="access-provider-filter">
+            <option value="">All registered providers</option>
+          </select>
+        </div>
+
+        <div id="professional-patient-list" class="record-list"></div>
+        <div id="professional-patient-details" class="summary-box"></div>
+      </section>
+
+      <section id="records-screen" class="screen">
+        <div class="section-header">
+          <h1>Medical Records Hub</h1>
+          <p>Collect and combine medical notes from all your specialists in one accessible place.</p>
+        </div>
+
+        <form id="record-form" class="record-form">
+          <div class="field-group">
+            <label for="specialist">Specialist / Provider</label>
+            <input id="specialist" name="specialist" type="text" placeholder="e.g. Cardiologist" required />
+          </div>
+          <div class="field-group">
+            <label for="record-title">Record Title</label>
+            <input id="record-title" name="recordTitle" type="text" placeholder="e.g. Echocardiogram Report" required />
+          </div>
+          <div class="field-group">
+            <label for="record-date">Date</label>
+            <input id="record-date" name="recordDate" type="date" required />
+          </div>
+          <div class="field-group full-width">
+            <label for="record-file">Import PDF</label>
+            <input id="record-file" name="recordFile" type="file" accept="application/pdf" />
+            <p class="field-note">Add a PDF report to attach to this record. Files are stored locally in the browser.</p>
+          </div>
+          <div class="field-group full-width">
+            <label for="record-details">Details</label>
+            <textarea id="record-details" name="recordDetails" rows="4" placeholder="Enter the summary or findings from this specialist visit." required></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">Add Record</button>
+            <button type="button" id="clear-records" class="secondary-button">Clear All Records</button>
+          </div>
+        </form>
+
+        <section class="records-overview">
+          <h2>Your Collected Records</h2>
+          <div id="record-list" class="record-list" aria-live="polite"></div>
+        </section>
+
+        <section class="merge-panel">
+          <h2>Combined Record Summary</h2>
+          <p>Review all records together or export the merged summary to share with care teams.</p>
+          <div class="merge-actions">
+            <button type="button" id="merge-records" class="primary-button">Merge Records</button>
+            <button type="button" id="download-summary" class="secondary-button">Download Summary</button>
+          </div>
+          <div id="merged-summary" class="summary-box"></div>
+        </section>
+      </section>
+
+      <section id="profile-screen" class="screen">
+        <div class="section-header">
+          <h1>Patient Profile</h1>
+          <p>Save your account information so providers can quickly view your contact and care preferences.</p>
+        </div>
+
+        <form id="profile-form" class="bio-form">
+          <div class="field-group full-width">
+            <label for="profile-name">Full Name</label>
+            <input id="profile-name" name="profileName" type="text" placeholder="Your name" />
+          </div>
+          <div class="field-group full-width">
+            <label for="profile-email">Email</label>
+            <input id="profile-email" name="profileEmail" type="email" placeholder="you@example.com" />
+          </div>
+          <div class="field-group full-width">
+            <label for="profile-phone">Phone</label>
+            <input id="profile-phone" name="profilePhone" type="tel" placeholder="(555) 123-4567" />
+          </div>
+          <div class="field-group full-width">
+            <label for="profile-provider">Preferred Provider</label>
+            <input id="profile-provider" name="profileProvider" type="text" placeholder="e.g. Primary care physician" />
+          </div>
+          <div class="field-group full-width">
+            <label for="profile-emergency">Emergency Contact</label>
+            <input id="profile-emergency" name="profileEmergency" type="text" placeholder="Name and phone" />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">Save Profile</button>
+            <button type="button" id="clear-profile" class="secondary-button">Reset Profile</button>
+          </div>
+        </form>
+
+        <section class="bio-preview">
+          <h2>Profile Preview</h2>
+          <div id="profile-preview-content" class="preview-box">Your profile data will appear here after saving.</div>
+        </section>
+      </section>
+
+      <section id="bio-screen" class="screen">
+        <div class="section-header">
+          <h1>Patient Biography</h1>
+          <p>Share your story, health priorities, and personal details with providers and trusted contacts.</p>
+        </div>
+
+        <form id="bio-form" class="bio-form">
+          <label for="biography">Tell us about yourself</label>
+          <textarea id="biography" name="biography" rows="10" placeholder="Write about your medical journey, personal strengths, lifestyle preferences, or anything helpful for care teams."></textarea>
+          <div class="form-actions">
+            <button type="submit" class="primary-button">Save Biography</button>
+            <button type="button" id="clear-bio" class="secondary-button">Reset Biography</button>
+          </div>
+        </form>
+
+        <section class="bio-preview">
+          <h2>Biography Preview</h2>
+          <div id="bio-preview-content" class="preview-box">Your biography will appear here after saving.</div>
+        </section>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Patient Care Hub is a prototype interface for consolidating medical records and personal health stories.</p>
+    </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>
+
     <meta charset="UTF-8" /><!DOCTYPE html>
 <html lang="en">
   <head>
